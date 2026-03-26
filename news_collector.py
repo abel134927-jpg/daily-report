@@ -211,7 +211,8 @@ def summarize_with_deepseek(articles: list[dict]) -> str:
     return strip_urls(result)
 
 
-def send_line_message(text: str, channel_token: str, user_id: str):
+def send_line_message(text: str, channel_token: str, targets: list[str]):
+    """發送訊息到多個目標（個人 User ID 或群組 Group ID）"""
     url     = "https://api.line.me/v2/bot/message/push"
     headers = {"Authorization": f"Bearer {channel_token}", "Content-Type": "application/json"}
     max_len = 4800
@@ -228,15 +229,15 @@ def send_line_message(text: str, channel_token: str, user_id: str):
         chunks.append(current.strip())
 
     total = len(chunks)
-    for i, chunk in enumerate(chunks):
-        prefix = f"[{i+1}/{total}]\n" if total > 1 else ""
-        body = {"to": user_id, "messages": [{"type": "text", "text": prefix + chunk}]}
-        resp = requests.post(url, headers=headers, data=json.dumps(body))
-        if resp.status_code == 200:
-            print(f"[OK] LINE sent {i+1}/{total}")
-        else:
-            print(f"[FAIL] LINE error ({resp.status_code}): {resp.text}")
-            raise RuntimeError("LINE Messaging API send failed")
+    for target in targets:
+        for i, chunk in enumerate(chunks):
+            prefix = f"[{i+1}/{total}]\n" if total > 1 else ""
+            body = {"to": target, "messages": [{"type": "text", "text": prefix + chunk}]}
+            resp = requests.post(url, headers=headers, data=json.dumps(body))
+            if resp.status_code == 200:
+                print(f"[OK] {target[:8]}... sent {i+1}/{total}")
+            else:
+                print(f"[FAIL] {target[:8]}... error ({resp.status_code}): {resp.text}")
 
 
 def main():
@@ -260,10 +261,11 @@ def main():
         print("Done")
 
     print("Sending to LINE...")
+    targets = [os.environ["LINE_USER_ID"], os.environ["LINE_GROUP_ID"]]
     send_line_message(
         text          = digest,
         channel_token = os.environ["LINE_CHANNEL_ACCESS_TOKEN"],
-        user_id       = os.environ["LINE_USER_ID"],
+        targets       = targets,
     )
     print("Complete!")
     print("=" * 50)
