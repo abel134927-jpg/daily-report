@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""每日電腦硬體新聞整理機器人 - 使用 Claude AI 整理後發送至 LINE Messaging API"""
+"""每日電腦硬體新聞整理機器人 - DeepSeek AI 整理後發送至 LINE Messaging API"""
 
 import os
+import re
 import json
 import calendar
 import feedparser
 import requests
 from datetime import datetime, timedelta, timezone
-import anthropic
+from openai import OpenAI
 
 # ==================== RSS 來源 ====================
-# 硬體媒體（GPU / CPU / 其他硬體）
 HARDWARE_FEEDS = [
     ("Tom's Hardware",  "https://www.tomshardware.com/feeds/all"),
     ("TechPowerUp",     "https://www.techpowerup.com/rss/news.xml"),
@@ -19,7 +19,6 @@ HARDWARE_FEEDS = [
     ("The Verge",       "https://www.theverge.com/rss/index.xml"),
 ]
 
-# 中文科技媒體（筆電 / 硬體 / 開箱）
 CN_TECH_FEEDS = [
     ("IT之家",      "https://www.ithome.com/rss/"),
     ("快科技",      "https://news.mydrivers.com/rss/"),
@@ -28,18 +27,13 @@ CN_TECH_FEEDS = [
     ("什麼值得買",  "https://www.smzdm.com/feed/"),
 ]
 
-# 中文社群媒體（透過 RSSHub 公開實例）
-# RSSHub 文件：https://docs.rsshub.app/
 CN_SOCIAL_FEEDS = [
-    # 微博關鍵字搜尋
     ("微博-機械革命",   "https://rsshub.app/weibo/search/weibo?q=機械革命"),
     ("微博-拯救者",     "https://rsshub.app/weibo/search/weibo?q=拯救者筆記本"),
     ("微博-ROG",        "https://rsshub.app/weibo/search/weibo?q=ROG筆電"),
     ("微博-外星人",     "https://rsshub.app/weibo/search/weibo?q=外星人筆記本"),
-    # 知乎搜尋
     ("知乎-機械革命",   "https://rsshub.app/zhihu/search?query=機械革命筆記本"),
     ("知乎-拯救者",     "https://rsshub.app/zhihu/search?query=拯救者筆記本"),
-    # B站搜尋（影片標題有開箱/評測資訊）
     ("B站-機械革命",    "https://rsshub.app/bilibili/search/video?keyword=機械革命筆電"),
     ("B站-拯救者",      "https://rsshub.app/bilibili/search/video?keyword=拯救者筆電評測"),
     ("B站-ROG",         "https://rsshub.app/bilibili/search/video?keyword=ROG筆電評測"),
@@ -47,8 +41,8 @@ CN_SOCIAL_FEEDS = [
 
 ALL_FEEDS = HARDWARE_FEEDS + CN_TECH_FEEDS + CN_SOCIAL_FEEDS
 
-# ==================== 關鍵字過濾 ====================
-# 大陸筆電品牌（只追蹤這些）
+# ==================== 關鍵字分類 ====================
+# 大陸筆電品牌（只有命中這裡才算筆電新聞）
 LAPTOP_CN_KEYWORDS = [
     "機械革命", "mechrev",
     "拯救者", "legion",
@@ -60,35 +54,40 @@ LAPTOP_CN_KEYWORDS = [
     "火影",
     "炫龍",
     "小米筆記本", "mi notebook", "redmi book", "小米電腦",
-    "华为笔记本", "matebook", "huawei laptop",
-    "荣耀笔记本", "magicbook", "honor laptop",
-    "thinkpad", "联想拯救者", "ideapad", "lenovo yoga",
+    "matebook", "华为笔记本", "huawei laptop",
+    "magicbook", "荣耀笔记本", "honor laptop",
+    "thinkpad", "聯想拯救者", "联想拯救者", "ideapad", "lenovo yoga",
     "微星笔记本", "msi laptop",
     "华硕笔记本", "vivobook", "zenbook",
-    "宏碁", "acer predator", "acer nitro",
+    "acer predator", "acer nitro", "宏碁掠奪者",
 ]
 
-# GPU / CPU / 其他硬體關鍵字（不限品牌地區）
+# GPU / CPU / 其他硬體關鍵字
 OTHER_HW_KEYWORDS = [
-    # GPU
     "gpu", "graphics card", "rtx 5", "rtx 4", "rtx 3", "geforce",
     "radeon", "rx 9", "rx 8", "rx 7", "arc ", "intel arc",
     "顯卡", "显卡", "video card",
-    # CPU
     "ryzen", "core ultra", "core i9", "core i7", "core i5",
     "snapdragon x", "cpu", "processor", "處理器", "处理器",
-    # 其他硬體
     "motherboard", "主板", "主機板", "ddr5", "ddr4",
     "ssd", "nvme", "psu", "power supply", "monitor", "顯示器", "显示器",
 ]
 
-ALL_KEYWORDS = LAPTOP_CN_KEYWORDS + OTHER_HW_KEYWORDS
+
+def categorize(article: dict) -> str:
+    """Python 層先分類，避免 AI 誤判"""
+    text = (article["title"] + " " + article["summary"]).lower()
+    if any(kw.lower() in text for kw in LAPTOP_CN_KEYWORDS):
+        return "LAPTOP_CN"
+    if any(kw.lower() in text for kw in OTHER_HW_KEYWORDS):
+        return "HARDWARE"
+    return "HARDWARE"
 
 
 def fetch_news(hours: int = 24) -> list[dict]:
-    """從所有 RSS 來源抓取過去 N 小時的相關新聞"""
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     articles = []
+    all_keywords = LAPTOP_CN_KEYWORDS + OTHER_HW_KEYWORDS
 
     for source_name, url in ALL_FEEDS:
         try:
@@ -101,28 +100,23 @@ def fetch_news(hours: int = 24) -> list[dict]:
                     pub_date = datetime.fromtimestamp(
                         calendar.timegm(entry.published_parsed), tz=timezone.utc
                     )
-
                 if pub_date and pub_date < cutoff:
                     continue
 
                 title   = entry.get("title", "").strip()
                 summary = entry.get("summary", entry.get("description", ""))[:400].strip()
-                link    = entry.get("link", "")
 
                 text = (title + " " + summary).lower()
-                if any(kw.lower() in text for kw in ALL_KEYWORDS):
+                if any(kw.lower() in text for kw in all_keywords):
                     articles.append({
                         "source":  source_name,
                         "title":   title,
                         "summary": summary,
-                        "link":    link,
                         "date":    pub_date.strftime("%m-%d %H:%M UTC") if pub_date else "未知",
                     })
-
         except Exception as e:
-            print(f"[警告] 無法讀取 {source_name}: {e}")
+            print(f"[WARN] {source_name}: {e}")
 
-    # 去重（同標題）
     seen, unique = set(), []
     for a in articles:
         key = a["title"][:60]
@@ -133,39 +127,44 @@ def fetch_news(hours: int = 24) -> list[dict]:
     return unique
 
 
-def summarize_with_claude(articles: list[dict]) -> str:
-    """將原始新聞送給 Claude，整理成 LINE 純文字格式"""
-    client = anthropic.Anthropic()
+def strip_urls(text: str) -> str:
+    """移除輸出中所有網址（防止 AI 自行加上連結）"""
+    text = re.sub(r'https?://\S+', '', text)
+    text = re.sub(r'連結[：:]\s*\n', '', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
+
+
+def summarize_with_deepseek(articles: list[dict]) -> str:
+    client = OpenAI(
+        api_key=os.environ["DEEPSEEK_API_KEY"],
+        base_url="https://api.deepseek.com",
+    )
 
     tz_tw = timezone(timedelta(hours=8))
     today = datetime.now(tz_tw).strftime("%Y年%-m月%-d日")
 
-    raw = "\n\n".join([
-        f"[{a['source']} | {a['date']}]\n標題：{a['title']}\n摘要：{a['summary']}"
-        for a in articles[:60]
-    ])
+    # Python 預先分類，讓 AI 直接對應分類整理
+    laptop_lines, hardware_lines = [], []
+    for a in articles[:60]:
+        entry = f"[{a['source']} | {a['date']}]\n標題：{a['title']}\n摘要：{a['summary']}"
+        if categorize(a) == "LAPTOP_CN":
+            laptop_lines.append(entry)
+        else:
+            hardware_lines.append(entry)
 
-    prompt = f"""你是一位專業的「筆記本與電腦硬體每日新聞整理專家」。
+    laptop_raw   = "\n\n".join(laptop_lines)   or "（今日無大陸筆電品牌新聞）"
+    hardware_raw = "\n\n".join(hardware_lines) or "（今日無相關硬體新聞）"
 
-以下是今日自動抓取的新聞原始資料，請整理成繁體中文每日摘要，輸出給 LINE 訊息使用（純文字，不要用 Markdown 語法如 ** 或 ###）。
+    prompt = f"""你是一位專業的電腦硬體每日新聞整理專家，請整理成繁體中文摘要發送至 LINE（純文字，不得包含任何網址或連結）。
 
-【筆記本電腦規則 - 非常重要，嚴格執行】
-筆電新聞只能出現以下大陸/亞洲品牌，看到其他品牌（HP、Dell 普通款、蘋果 MacBook、微軟 Surface 等）請直接忽略，不得放入輸出：
-機械革命、拯救者（Legion）、ROG 玩家國度、外星人（Alienware）、
-神舟、雷神、機械師、火影、炫龍、
-小米/紅米、華為/榮耀、聯想（ThinkPad/IdeaPad/Yoga）、
-微星（MSI）、華碩（ROG/VivoBook/ZenBook）、宏碁（Predator/Nitro）
-若以上品牌今日無新聞，請直接寫「今日無大陸品牌筆電重大消息」，不要用其他品牌湊數。
+=== 大陸筆電品牌新聞（只整理這些，不得加入其他品牌）===
+{laptop_raw}
 
-【其他硬體規則】
-顯卡（NVIDIA、AMD、Intel Arc）：有價格變動請標明「漲/跌」幅度與地區
-CPU（Intel、AMD）：有價格變動請標明「漲/跌」幅度與地區
-其他重要硬體：主機板、記憶體、SSD、電源、顯示器、散熱
+=== 顯卡 / CPU / 其他硬體新聞 ===
+{hardware_raw}
 
-【新聞原始資料】
-{raw}
-
-【輸出格式（純文字，繁體中文，用 emoji 分隔區塊）】
+【輸出格式，嚴格遵守，不得輸出任何 http 網址】
 
 📅 今日日期：{today}
 ────────────────────
@@ -174,44 +173,39 @@ CPU（Intel、AMD）：有價格變動請標明「漲/跌」幅度與地區
 2.
 3.
 ════════════════════
-📌 大陸筆電新聞（只限上述品牌）
+📌 大陸筆電新聞
 • 標題
-  摘要：（1-2句）
+  摘要：（1-2句，不附連結）
 
 ════════════════════
 📌 顯卡新聞與價格
 • 標題
-  摘要：（1-2句）
+  摘要：（1-2句，有價格變動請標明漲/跌與地區）
 
 ════════════════════
 📌 CPU新聞與價格
 • 標題
-  摘要：（1-2句）
+  摘要：（1-2句，有價格變動請標明漲/跌與地區）
 
 ════════════════════
 📌 其他電腦硬體新聞
 （若無重大消息請寫：今日無重大消息）
 ────────────────────
-💡 額外提醒：一句趨勢或購買建議
+💡 額外提醒：一句趨勢或購買建議"""
 
-注意：只使用上方提供的原始新聞，輸出中絕對不要出現任何網址或連結，無相關新聞的分類請寫「今日無重大消息」。"""
-
-    message = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=2000,
+    resp = client.chat.completions.create(
+        model="deepseek-chat",
         messages=[{"role": "user", "content": prompt}],
+        max_tokens=2000,
     )
 
-    return message.content[0].text
+    result = resp.choices[0].message.content
+    return strip_urls(result)
 
 
 def send_line_message(text: str, channel_token: str, user_id: str):
-    """使用 LINE Messaging API 推送訊息（自動切割超過 4800 字元的長文）"""
     url     = "https://api.line.me/v2/bot/message/push"
-    headers = {
-        "Authorization": f"Bearer {channel_token}",
-        "Content-Type": "application/json",
-    }
+    headers = {"Authorization": f"Bearer {channel_token}", "Content-Type": "application/json"}
     max_len = 4800
 
     lines, chunks, current = text.split("\n"), [], ""
@@ -228,10 +222,7 @@ def send_line_message(text: str, channel_token: str, user_id: str):
     total = len(chunks)
     for i, chunk in enumerate(chunks):
         prefix = f"[{i+1}/{total}]\n" if total > 1 else ""
-        body = {
-            "to": user_id,
-            "messages": [{"type": "text", "text": prefix + chunk}],
-        }
+        body = {"to": user_id, "messages": [{"type": "text", "text": prefix + chunk}]}
         resp = requests.post(url, headers=headers, data=json.dumps(body))
         if resp.status_code == 200:
             print(f"[OK] LINE sent {i+1}/{total}")
@@ -244,7 +235,7 @@ def main():
     print("=" * 50)
     print("Fetching hardware news...")
     articles = fetch_news(hours=24)
-    print(f"Found {len(articles)} relevant articles")
+    print(f"Found {len(articles)} articles")
 
     tz_tw = timezone(timedelta(hours=8))
     today = datetime.now(tz_tw).strftime("%Y年%-m月%-d日")
@@ -253,13 +244,11 @@ def main():
         digest = (
             f"📅 今日日期：{today}\n"
             "────────────────────\n"
-            "⚠️ 今日未從 RSS 找到相關硬體新聞。\n"
-            "可能原因：RSS 來源暫時無法存取，或今日新聞較少。\n"
-            "請手動查看 IT之家 / 快科技 確認。"
+            "⚠️ 今日未找到相關硬體新聞，請手動查看 IT之家 / 快科技 確認。"
         )
     else:
-        print("Summarizing with Claude...")
-        digest = summarize_with_claude(articles)
+        print("Summarizing with DeepSeek...")
+        digest = summarize_with_deepseek(articles)
         print("Done")
 
     print("Sending to LINE...")
