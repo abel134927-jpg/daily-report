@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日宏觀資訊綜合早報 · 2026-03-26</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', Arial, sans-serif;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #1e293b;
+  background: #eef2f7;
+}
+
+/* ===== WRAPPER ===== */
+.page {
+  max-width: 960px;
+  margin: 24px auto;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* ===== MASTHEAD ===== */
+.masthead {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2a4a 55%, #163460 100%);
+  padding: 28px 36px 22px;
+  color: #fff;
+  position: relative;
+}
+.masthead::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f0b429, #e85d04, #f0b429);
+}
+.masthead-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.masthead-title h1 {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  line-height: 1.3;
+}
+.masthead-title h2 {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 5px;
+  opacity: .65;
+  margin-top: 3px;
+}
+.masthead-date {
+  text-align: right;
+  font-size: 11px;
+  opacity: .75;
+  line-height: 1.8;
+}
+.masthead-meta {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.15);
+  font-size: 10.5px;
+  opacity: .8;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* ===== SUMMARY TICKER ===== */
+.ticker-bar {
+  display: flex;
+  background: #0f2a4a;
+  border-bottom: 1px solid #1e3a5f;
+  overflow: hidden;
+}
+.ticker-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 8px;
+  border-right: 1px solid #1e3a5f;
+  color: #fff;
+}
+.ticker-item:last-child { border-right: none; }
+.ticker-item .t-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; opacity: .6; }
+.ticker-item .t-price { font-size: 14px; font-weight: 700; margin: 2px 0; }
+.ticker-item .t-chg   { font-size: 10px; }
+.ticker-item.up  .t-price { color: #22c55e; }
+.ticker-item.dn  .t-price { color: #ef4444; }
+.ticker-item.neu .t-price { color: #f0b429; }
+.ticker-item.up  .t-chg   { color: #86efac; }
+.ticker-item.dn  .t-chg   { color: #fca5a5; }
+
+/* ===== CONTENT BODY ===== */
+.body-wrap { padding: 24px 32px; }
+
+/* ===== SECTION ===== */
+.sec { margin-bottom: 22px; }
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+  border-bottom: 2px solid #0f2a4a;
+}
+.sec-num {
+  background: #0f2a4a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sec-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f2a4a;
+  letter-spacing: .5px;
+}
+.sub-hdr {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  padding: 5px 0 4px;
+  margin: 12px 0 5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* ===== TABLES ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+th {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: #eff6ff; }
+.num { text-align: right; font-family: 'Consolas', 'Courier New', monospace; white-space: nowrap; }
+th.num { text-align: right; font-family: inherit; font-weight: 600; }
+.sym { color: #94a3b8; font-family: 'Consolas', monospace; font-size: 10px; }
+.trend { padding-left: 32px !important; text-align: center; }
+
+/* ===== COLORS ===== */
+.up  { color: #16a34a; font-weight: 600; }
+.dn  { color: #dc2626; font-weight: 600; }
+.neu { color: #94a3b8; }
+
+/* ===== NEWS CARDS ===== */
+.news-grid { display: flex; flex-direction: column; gap: 8px; }
+.news-card {
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #94a3b8;
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  background: #fff;
+}
+.news-card.h-high { border-left-color: #dc2626; }
+.news-card.h-mid  { border-left-color: #f59e0b; }
+.news-card.h-low  { border-left-color: #94a3b8; }
+
+.news-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge-high { background: #fee2e2; color: #b91c1c; }
+.badge-mid  { background: #fef3c7; color: #92400e; }
+.badge-low  { background: #f1f5f9; color: #64748b; }
+.badge-bull { background: #dcfce7; color: #166534; }
+.badge-bear { background: #fee2e2; color: #b91c1c; }
+.badge-neu  { background: #f1f5f9; color: #475569; }
+.badge-scope{ background: #eff6ff; color: #1d4ed8; }
+
+.news-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.news-title a { color: inherit; text-decoration: none; }
+.news-title a:hover { color: #1d4ed8; }
+.news-summary {
+  font-size: 11px;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.news-en-ref {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-bottom: 3px;
+  font-style: italic;
+  line-height: 1.4;
+}
+.news-meta {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* ===== SENTIMENT ===== */
+.sent-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sent-card {
+  background: #0f2a4a;
+  color: #fff;
+  padding: 14px;
+  border-radius: 6px;
+  text-align: center;
+}
+.sent-card .sc-label { font-size: 9.5px; opacity: .6; text-transform: uppercase; letter-spacing: 1px; }
+.sent-card .sc-val   { font-size: 22px; font-weight: 700; margin: 5px 0 2px; }
+.sent-card .sc-sub   { font-size: 10px; opacity: .7; }
+
+/* FEAR GREED BAR */
+.fg-wrap {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.fg-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(to right, #dc2626 0%, #f59e0b 30%, #eab308 50%, #22c55e 75%, #15803d 100%);
+  position: relative;
+  margin: 8px 0 5px;
+}
+.fg-needle {
+  position: absolute;
+  width: 2px; height: 18px;
+  top: -3px;
+  background: #1e293b;
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+.fg-labels { display: flex; justify-content: space-between; font-size: 9.5px; color: #94a3b8; }
+
+/* CYCLE */
+.cycle-wrap { display: flex; gap: 20px; align-items: flex-start; }
+.cycle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; flex-shrink: 0; }
+.cycle-cell {
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 11px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-radius: 3px;
+}
+.cycle-cell.active {
+  background: #0f2a4a;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ===== HOT STOCKS ===== */
+.vol-chip {
+  display: inline-block;
+  background: #0f2a4a;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+/* ===== TWO COL ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ===== FOOTER ===== */
+.report-footer {
+  background: #f8fafc;
+  border-top: 2px solid #e2e8f0;
+  padding: 16px 32px;
+  font-size: 10px;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.8;
+}
+.report-footer .disclaimer {
+  color: #dc2626;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* ===== PRINT BUTTON ===== */
+.fab {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  background: #0f2a4a;
+  color: #fff;
+  border: none;
+  padding: 13px 22px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  z-index: 999;
+  transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.fab:hover { background: #163460; transform: translateY(-2px); }
+
+/* ===== PRINT ===== */
+@media print {
+  body   { background: #fff; font-size: 10px; }
+  .fab   { display: none !important; }
+  .page  { margin: 0; box-shadow: none; border-radius: 0; max-width: 100%; }
+  .body-wrap { padding: 16px 20px; }
+
+  /* Force colours to print */
+  .masthead, .ticker-bar, .ticker-item, .sec-num, th,
+  .sent-card, .cycle-cell.active, .vol-chip {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .news-card.h-high, .news-card.h-mid, .news-card.h-low {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tr:nth-child(even) td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Page layout */
+  @page { margin: 1cm 1.2cm; size: A4; }
+  .sec  { page-break-inside: auto; break-inside: auto; }
+  .sec-hdr { page-break-after: avoid; break-after: avoid; }
+  .news-card { page-break-inside: avoid; break-inside: avoid; }
+  .sent-row { page-break-inside: avoid; break-inside: avoid; }
+  .cycle-wrap { page-break-inside: avoid; break-inside: avoid; }
+  .two-col { page-break-inside: auto; break-inside: auto; }
+  tr { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Repeat table headers on page break */
+  thead { display: table-header-group; }
+}
+
+@media (max-width: 760px) {
+  .ticker-bar  { flex-wrap: wrap; }
+  .two-col     { grid-template-columns: 1fr; }
+  .sent-row    { grid-template-columns: repeat(2, 1fr); }
+  .body-wrap   { padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div style="position:fixed;bottom:28px;right:28px;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+  <div style="background:rgba(15,42,74,0.92);color:#cbd5e1;font-size:10px;padding:6px 12px;border-radius:8px;line-height:1.7;text-align:right;max-width:210px">
+    列印時請在設定中<br>關閉「頁首及頁尾」<br>以移除左下角網址浮水印
+  </div>
+  <button class="fab" onclick="window.print()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <rect x="6" y="14" width="12" height="8"></rect>
+    </svg>
+    列印 / 下載 PDF
+  </button>
+</div>
+
+<div class="page">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-top">
+    <div class="masthead-title">
+      <h1>每日宏觀資訊綜合早報</h1>
+      <h2>Daily Macro Market Briefing</h2>
+    </div>
+    <div class="masthead-date">
+      <div style="font-size:15px;font-weight:700">2026-03-26</div>
+      <div>生成時間 2026-03-26 15:09</div>
+    </div>
+  </div>
+  <div class="masthead-meta">
+    <span>&#128202; Yahoo Finance</span>
+    <span>&#128200; CNN Fear &amp; Greed Index</span>
+    <span>&#128240; RSS: Reuters / MarketWatch / CNBC</span>
+    <span>&#9888; 本報告僅供參考，不構成投資建議</span>
+  </div>
+</div>
+
+<!-- TICKER BAR -->
+<div class="ticker-bar"><div class="ticker-item up"><div class="t-label">S&P 500</div><div class="t-price">6,592</div><div class="t-chg">+0.54%</div></div><div class="ticker-item up"><div class="t-label">NASDAQ</div><div class="t-price">21,930</div><div class="t-chg">+0.77%</div></div><div class="ticker-item up"><div class="t-label">DOW</div><div class="t-price">46,429</div><div class="t-chg">+0.66%</div></div><div class="ticker-item up"><div class="t-label">日經225</div><div class="t-price">53,750</div><div class="t-chg">+2.87%</div></div><div class="ticker-item up"><div class="t-label">黃金</div><div class="t-price">$4,550</div><div class="t-chg">+3.42%</div></div><div class="ticker-item dn"><div class="t-label">WTI原油</div><div class="t-price">$90.32</div><div class="t-chg">-2.20%</div></div><div class="ticker-item up"><div class="t-label">DXY</div><div class="t-price">99.60</div><div class="t-chg">+0.17%</div></div><div class="ticker-item up"><div class="t-label">BTC</div><div class="t-price">$71,310</div><div class="t-chg">+1.12%</div></div></div>
+
+<!-- BODY -->
+<div class="body-wrap">
+
+<!-- 1. INDICES -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">1</div><div class="sec-title">各國指數表現</div></div>
+  <div class="sub-hdr">亞洲市場</div>
+    <table>
+      <thead><tr><th>指數</th><th class="num">收盤價</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th><th class="num">年初至今</th></tr></thead>
+      <tbody><tr><td>日經225</td><td class="num">53,749.62</td><td class="num up">+1,497.34</td><td class="num up">+2.87%</td><td class="up trend">▲▲</td><td class="num up">+3.70%</td></tr><tr><td>台灣加權</td><td class="num">33,439.11</td><td class="num up">+826.87</td><td class="num up">+2.54%</td><td class="up trend">▲▲</td><td class="num up">+13.93%</td></tr><tr><td>香港恆生</td><td class="num">25,335.95</td><td class="num up">+272.24</td><td class="num up">+1.09%</td><td class="up trend">▲</td><td class="num dn">-3.81%</td></tr><tr><td>上證綜指</td><td class="num">3,931.84</td><td class="num up">+50.56</td><td class="num up">+1.30%</td><td class="up trend">▲</td><td class="num dn">-2.28%</td></tr><tr><td>深證成指</td><td class="num">13,801.00</td><td class="num up">+264.44</td><td class="num up">+1.95%</td><td class="up trend">▲</td><td class="num dn">-0.20%</td></tr><tr><td>韓國KOSPI</td><td class="num">5,642.21</td><td class="num up">+88.29</td><td class="num up">+1.59%</td><td class="up trend">▲</td><td class="num up">+30.92%</td></tr><tr><td>澳洲ASX200</td><td class="num">8,557.60</td><td class="num up">+178.20</td><td class="num up">+2.13%</td><td class="up trend">▲▲</td><td class="num dn">-1.95%</td></tr></tbody>
+    </table><div class="sub-hdr">新興市場</div>
+    <table>
+      <thead><tr><th>指數</th><th class="num">收盤價</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th><th class="num">年初至今</th></tr></thead>
+      <tbody><tr><td>印度SENSEX</td><td class="num">75,273.45</td><td class="num up">+1,205.00</td><td class="num up">+1.63%</td><td class="up trend">▲</td><td class="num dn">-11.64%</td></tr><tr><td>印度NIFTY50</td><td class="num">23,306.45</td><td class="num up">+394.05</td><td class="num up">+1.72%</td><td class="up trend">▲</td><td class="num dn">-10.86%</td></tr><tr><td>印尼雅加達綜合</td><td class="num">7,302.12</td><td class="num up">+195.28</td><td class="num up">+2.75%</td><td class="up trend">▲▲</td><td class="num dn">-16.53%</td></tr><tr><td>泰國SET</td><td class="num">1,457.91</td><td class="num up">+47.52</td><td class="num up">+3.37%</td><td class="up trend">▲▲</td><td class="num up">+13.89%</td></tr><tr><td>馬來西亞KLCI</td><td class="num">1,716.68</td><td class="num up">+7.92</td><td class="num up">+0.46%</td><td class="up trend">▲</td><td class="num up">+2.81%</td></tr><tr><td>菲律賓PSEi</td><td class="num">6,044.17</td><td class="num up">+107.97</td><td class="num up">+1.82%</td><td class="up trend">▲</td><td class="num dn">-1.48%</td></tr></tbody>
+    </table><div class="sub-hdr">歐洲市場</div>
+    <table>
+      <thead><tr><th>指數</th><th class="num">收盤價</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th><th class="num">年初至今</th></tr></thead>
+      <tbody><tr><td>德國DAX</td><td class="num">22,957.08</td><td class="num up">+320.17</td><td class="num up">+1.41%</td><td class="up trend">▲</td><td class="num dn">-6.45%</td></tr><tr><td>英國FTSE100</td><td class="num">10,106.84</td><td class="num up">+141.64</td><td class="num up">+1.42%</td><td class="up trend">▲</td><td class="num up">+1.57%</td></tr><tr><td>法國CAC40</td><td class="num">7,846.55</td><td class="num up">+102.63</td><td class="num up">+1.33%</td><td class="up trend">▲</td><td class="num dn">-4.25%</td></tr><tr><td>歐洲STOXX50</td><td class="num">5,649.33</td><td class="num up">+68.04</td><td class="num up">+1.22%</td><td class="up trend">▲</td><td class="num dn">-4.63%</td></tr><tr><td>瑞士SMI</td><td class="num">12,718.36</td><td class="num up">+202.42</td><td class="num up">+1.62%</td><td class="up trend">▲</td><td class="num dn">-3.99%</td></tr></tbody>
+    </table><div class="sub-hdr">美國市場</div>
+    <table>
+      <thead><tr><th>指數</th><th class="num">收盤價</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th><th class="num">年初至今</th></tr></thead>
+      <tbody><tr><td>S&P 500</td><td class="num">6,591.90</td><td class="num up">+35.53</td><td class="num up">+0.54%</td><td class="up trend">▲</td><td class="num dn">-3.89%</td></tr><tr><td>納斯達克</td><td class="num">21,929.83</td><td class="num up">+167.94</td><td class="num up">+0.77%</td><td class="up trend">▲</td><td class="num dn">-5.62%</td></tr><tr><td>道瓊斯</td><td class="num">46,429.49</td><td class="num up">+305.43</td><td class="num up">+0.66%</td><td class="up trend">▲</td><td class="num dn">-4.04%</td></tr><tr><td>羅素2000</td><td class="num">2,536.38</td><td class="num up">+30.94</td><td class="num up">+1.23%</td><td class="up trend">▲</td><td class="num up">+1.12%</td></tr><tr><td>費城半導體</td><td class="num">7,967.75</td><td class="num up">+95.04</td><td class="num up">+1.21%</td><td class="up trend">▲</td><td class="num up">+8.15%</td></tr></tbody>
+    </table>
+</div>
+
+<!-- 2. NEWS -->
+<div class="sec">
+  <div class="sec-hdr">
+    <div class="sec-num">2</div>
+    <div class="sec-title">宏觀重點新聞 <span style="font-size:9.5px;color:#22c55e;font-weight:600">● Claude AI 中文分析</span></div>
+  </div>
+  <div style="font-size:10px;color:#94a3b8;margin-bottom:10px">
+    篩選標準：高影響（Fed/GDP/通脹/地緣政治）｜中影響（企業財報/大宗商品）｜低影響（一般市場動態）
+  </div>
+  <div class="news-grid"><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bull">利多</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://finance.yahoo.com/video/how-the-usiran-war-is-moving-gold-etfs-and-energy-etfs-152927372.html" target="_blank">美伊戰爭推動黃金與能源ETF波動</a></div>
+  <div class="news-summary">美國提出15點伊朗和平計畫，金價上揚、油價下跌。地緣政治風險緩解推動避險資產輪動，黃金ETF受益。</div>
+  <div class="news-en-ref">How the US–Iran war is moving gold ETFs and energy ETFs</div>
+  <div class="news-meta">Yahoo Finance Video · 03-25 15:29</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bear">利空</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://finance.yahoo.com/video/iran-outlines-critical-conditions-for-ending-war-with-us-143640771.html" target="_blank">伊朗提出停戰關鍵條件</a></div>
+  <div class="news-summary">伊朗提出多項停戰條件，市場對談判前景不確定性升高。布倫特油價回跌至100美元下方，反映和談預期回溫。</div>
+  <div class="news-en-ref">Iran outlines critical conditions for ending war with US</div>
+  <div class="news-meta">Yahoo Finance Video · 03-25 14:36</div>
+</div><div class="news-card h-low">
+  <div class="news-badges">
+    <span class="badge badge-low">低影響</span>
+    <span class="badge badge-neu">中性</span>
+    <span class="badge badge-scope">美國</span>
+  </div>
+  <div class="news-title"><a href="https://www.nbcnews.com/news/us-news/know-laguardia-plane-fire-truck-crash-rcna264856" target="_blank">拉瓜迪亞機場飛機消防車相撞事件</a></div>
+  <div class="news-summary">紐約機場客運機與消防車相撞，兩名飛行員身亡。該事件為局部安全事故，對市場無直接財務影響。</div>
+  <div class="news-en-ref">What we know about the LaGuardia plane and fire truck crash</div>
+  <div class="news-meta">CNBC · Tue, 24 Mar 2026</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bull">利多</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://www.nbcnews.com/business/markets/stocks-oil-prices-us-iran-war-rcna265064" target="_blank">股市上揚油價下跌 伊朗停火談判推升風險胃口</a></div>
+  <div class="news-summary">美股週三上漲，全球油價下跌，停火談判預期改善投資情緒。避險情緒緩解利於股市，利空能源板塊。</div>
+  <div class="news-en-ref">Stocks rally, oil prices fall amid talk of Iran ceasefire</div>
+  <div class="news-meta">CNBC · Wed, 25 Mar 2026</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-neu">中性</span>
+    <span class="badge badge-scope">美國</span>
+  </div>
+  <div class="news-title"><a href="https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-futures-flat-as-wall-street-weighs-prospects-for-iran-truce-225159568.html" target="_blank">道瓊期貨持平 伊朗談判前景不明確</a></div>
+  <div class="news-summary">川普與伊朗相互矛盾的談判聲明導致市場震盪。期貨市場反應謹慎，投資者觀望談判進展。</div>
+  <div class="news-en-ref">Stock market today: Dow, S&P 500, Nasdaq futures flat as Wall Street weighs prospects for Iran truce</div>
+  <div class="news-meta">Yahoo Finance · 03-25 22:51</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bull">利多</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://finance.yahoo.com/markets/commodities/articles/gold-jumps-2-8-us-165042428.html" target="_blank">黃金漲2.8% 美國提15點中東計畫</a></div>
+  <div class="news-summary">美國中東和平計畫推升金價，金市自2月跌幅15%後反彈。停火預期與央行買盤支撐黃金走勢。</div>
+  <div class="news-en-ref">Gold Jumps 2.8% After US Proposes 15-Point Middle East Plan</div>
+  <div class="news-meta">GuruFocus.com · 03-25 16:50</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-neu">中性</span>
+    <span class="badge badge-scope">美國</span>
+  </div>
+  <div class="news-title"><a href="https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-iran-war-deal-hopes-karman/?src=A00220&yptr=yahoo" target="_blank">道瓊期貨退縮 伊朗戰爭和談希望與疑慮交織</a></div>
+  <div class="news-summary">股市漲幅受侵蝕，談判樂觀與悲觀預期反覆。不確定性導致市場多空拉鋸，股市走勢疲弱。</div>
+  <div class="news-en-ref">Dow Jones Futures: Stock Market Fades Amid Iran War Deal Hopes, Doubts</div>
+  <div class="news-meta">Investor's Business Daily · 03-26 03:06</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bear">利空</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://finance.yahoo.com/sectors/energy/articles/wti-oil-closes-lower-u-184403557.html" target="_blank">WTI油價下跌 美國停火計畫緩解戰爭風險</a></div>
+  <div class="news-summary">美國停火計畫推升談判預期，WTI油價週三下跌2.2%。停火希望遞增抑制油價上漲動力。</div>
+  <div class="news-en-ref">Update: WTI Oil Closes Lower as a U.S. Ceasefire Plan Raises Hopes For an End to the Iran War</div>
+  <div class="news-meta">MT Newswires · 03-25 18:44</div>
+</div><div class="news-card h-mid">
+  <div class="news-badges">
+    <span class="badge badge-mid">中影響</span>
+    <span class="badge badge-bull">利多</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://247wallst.com/investing/2026/03/25/gld-just-hit-180-billion-in-assets-here-is-the-etf-that-actually-made-investors-more-money/" target="_blank">GLD資產達1800億美元 黃金ETF表現超群</a></div>
+  <div class="news-summary">SPDR黃金ETF資產突破1800億美元，淨值貶損交易中表現亮眼。金價上升與避險需求推升基金吸金力。</div>
+  <div class="news-en-ref">GLD Just Hit $180 Billion in Assets. Here Is the ETF That Actually Made Investors More Money</div>
+  <div class="news-meta">24/7 Wall St. · 03-25 15:18</div>
+</div><div class="news-card h-high">
+  <div class="news-badges">
+    <span class="badge badge-high">高影響</span>
+    <span class="badge badge-neu">中性</span>
+    <span class="badge badge-scope">全球</span>
+  </div>
+  <div class="news-title"><a href="https://www.dlnews.com/articles/markets/billions-in-bitcoin-options-to-expire-this-friday/" target="_blank">170億美元加密貨幣期權到期 波動率或升溫</a></div>
+  <div class="news-summary">本週170億美元加密期權到期，伊朗談判截止日期同步。大額期權到期與地緣政治風險共振，引發波動性預期。</div>
+  <div class="news-en-ref">Over $17bn in crypto options to expire this week — here’s what that means for the Bitcoin price</div>
+  <div class="news-meta">DLNews · 03-26 00:48</div>
+</div></div>
+</div>
+
+<!-- 3. COMMODITIES / FOREX / BONDS -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">3</div><div class="sec-title">商品、外匯與債券</div></div>
+  <div class="two-col">
+    <div>
+      <div class="sub-hdr">大宗商品</div>
+      <table>
+        <thead><tr><th>商品</th><th class="num">價格</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th></tr></thead>
+        <tbody><tr><td>黃金</td><td class="num">$4549.80</td><td class="num up">+150.50</td><td class="num up">+3.42%</td><td class="up trend">▲▲</td></tr><tr><td>白銀</td><td class="num">$72.36</td><td class="num up">+3.09</td><td class="num up">+4.46%</td><td class="up trend">▲▲</td></tr><tr><td>原油(WTI)</td><td class="num">$90.32</td><td class="num dn">-2.03</td><td class="num dn">-2.20%</td><td class="dn trend">▼▼</td></tr><tr><td>布蘭特原油</td><td class="num">$102.22</td><td class="num dn">-2.27</td><td class="num dn">-2.17%</td><td class="dn trend">▼▼</td></tr><tr><td>銅</td><td class="num">$5.53</td><td class="num up">+0.11</td><td class="num up">+1.96%</td><td class="up trend">▲</td></tr><tr><td>天然氣</td><td class="num">$2.95</td><td class="num up">+0.01</td><td class="num up">+0.31%</td><td class="up trend">▲</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sub-hdr">外匯市場</div>
+      <table>
+        <thead><tr><th>貨幣對</th><th class="num">匯率</th><th class="num">漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th></tr></thead>
+        <tbody><tr><td>美元指數</td><td class="num">99.60</td><td class="num up">+0.17</td><td class="num up">+0.17%</td><td class="up trend">▲</td></tr><tr><td>EUR/USD</td><td class="num">1.1615</td><td class="num up">+0.0008</td><td class="num up">+0.07%</td><td class="up trend">▲</td></tr><tr><td>USD/JPY</td><td class="num">158.72</td><td class="num up">+0.24</td><td class="num up">+0.15%</td><td class="up trend">▲</td></tr><tr><td>GBP/USD</td><td class="num">1.3416</td><td class="num dn">-0.0008</td><td class="num dn">-0.06%</td><td class="dn trend">▼</td></tr><tr><td>USD/CNY</td><td class="num">6.8918</td><td class="num up">+0.0118</td><td class="num up">+0.17%</td><td class="up trend">▲</td></tr><tr><td>USD/TWD</td><td class="num">31.93</td><td class="num up">+0.06</td><td class="num up">+0.20%</td><td class="up trend">▲</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sub-hdr" style="margin-top:14px">債券殖利率</div>
+  <table>
+    <thead><tr><th>債券</th><th class="num">殖利率</th><th class="num">變動</th><th class="num">幅度</th><th class="trend">趨勢</th></tr></thead>
+    <tbody><tr><td>美國3月期</td><td class="num">3.620%</td><td class="num up">+0.0000</td><td class="num up">+0.00%</td><td class="up trend">▲</td></tr><tr><td>美國5年期</td><td class="num">3.970%</td><td class="num dn">-0.0600</td><td class="num dn">-1.49%</td><td class="dn trend">▼</td></tr><tr><td>美國10年期</td><td class="num">4.328%</td><td class="num dn">-0.0640</td><td class="num dn">-1.46%</td><td class="dn trend">▼</td></tr><tr><td>美國30年期</td><td class="num">4.897%</td><td class="num dn">-0.0440</td><td class="num dn">-0.89%</td><td class="dn trend">▼</td></tr></tbody>
+  </table>
+</div>
+
+<!-- 4. SENTIMENT -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">4</div><div class="sec-title">市場情緒指標</div></div>
+  <div class="sent-row">
+    <div class="sent-card">
+      <div class="sc-label">CNN 恐懼貪婪</div>
+      <div class="sc-val" style="color:#ef4444">19.3</div>
+      <div class="sc-sub">極度恐懼</div>
+    </div>
+    <div class="sent-card">
+      <div class="sc-label">VIX 恐慌指數</div>
+      <div class="sc-val" style="color:#ef4444">25.33</div>
+      <div class="sc-sub">高波動</div>
+    </div>
+    <div class="sent-card">
+      <div class="sc-label">美10Y 殖利率</div>
+      <div class="sc-val" style="color:#f0b429">4.328%</div>
+      <div class="sc-sub">美元指數 99.60</div>
+    </div>
+    <div class="sent-card">
+      <div class="sc-label">10Y-5Y 利差</div>
+      <div class="sc-val" style="color:#93c5fd">0.358</div>
+      <div class="sc-sub">殖利率曲線</div>
+    </div>
+  </div>
+
+  <div class="fg-wrap" style="padding:10px 16px 0">
+    <svg viewBox="0 0 400 248" style="width:100%;max-width:360px;display:block;margin:0 auto"><path d="M 58.0,162.0 A 142,142 0 0,1 99.6,61.6 L 140.6,102.6 A 84,84 0 0,0 116.0,162.0 Z" fill="#dc2626" stroke="#fff" stroke-width="2"/><path d="M 99.6,61.6 A 142,142 0 0,1 177.8,21.7 L 186.9,79.0 A 84,84 0 0,0 140.6,102.6 Z" fill="#f97316" stroke="#fff" stroke-width="2"/><path d="M 177.8,21.7 A 142,142 0 0,1 222.2,21.7 L 213.1,79.0 A 84,84 0 0,0 186.9,79.0 Z" fill="#eab308" stroke="#fff" stroke-width="2"/><path d="M 222.2,21.7 A 142,142 0 0,1 300.4,61.6 L 259.4,102.6 A 84,84 0 0,0 213.1,79.0 Z" fill="#4ade80" stroke="#fff" stroke-width="2"/><path d="M 300.4,61.6 A 142,142 0 0,1 342.0,162.0 L 284.0,162.0 A 84,84 0 0,0 259.4,102.6 Z" fill="#16a34a" stroke="#fff" stroke-width="2"/><line x1="118.0" y1="162.0" x2="56.0" y2="162.0" stroke="#fff" stroke-width="2.5"/><line x1="142.0" y1="104.0" x2="98.2" y2="60.2" stroke="#fff" stroke-width="2.5"/><line x1="187.2" y1="81.0" x2="177.5" y2="19.8" stroke="#fff" stroke-width="2.5"/><line x1="212.8" y1="81.0" x2="222.5" y2="19.8" stroke="#fff" stroke-width="2.5"/><line x1="258.0" y1="104.0" x2="301.8" y2="60.2" stroke="#fff" stroke-width="2.5"/><line x1="282.0" y1="162.0" x2="344.0" y2="162.0" stroke="#fff" stroke-width="2.5"/><text x="95.6" y="113.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">極度</text><text x="95.6" y="124.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">恐懼</text><text x="148.7" y="61.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">恐懼</text><text x="200.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">中性</text><text x="251.3" y="61.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">貪婪</text><text x="304.4" y="113.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">極度</text><text x="304.4" y="124.3" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#fff" font-weight="700">貪婪</text><text x="40.0" y="162.0" text-anchor="end" dominant-baseline="middle" font-size="10" fill="#94a3b8">0</text><text x="360.0" y="162.0" text-anchor="start" dominant-baseline="middle" font-size="10" fill="#94a3b8">100</text><line x1="200" y1="162" x2="101.4" y2="93.6" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/><circle cx="200" cy="162" r="11" fill="#1e293b"/><circle cx="200" cy="162" r="5" fill="#f0b429"/><text x="200" y="202" text-anchor="middle" font-size="30" font-weight="700" fill="#ef4444">19</text><text x="200" y="222" text-anchor="middle" font-size="12" fill="#475569">極度恐懼</text></svg>
+  </div>
+
+  <table style="margin-bottom:14px">
+    <thead><tr><th>指標</th><th class="num">當前</th><th class="num">前日</th><th class="num">一週前</th><th class="num">一月前</th><th class="num">一年前</th></tr></thead>
+    <tbody><tr><td>恐懼與貪婪</td><td class="num">19.3</td><td class="num">19.3</td><td class="num">17.3</td><td class="num">42.2</td><td class="num">28.9</td></tr></tbody>
+  </table>
+
+  <div class="sub-hdr">經濟週期指示器</div>
+  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin-top:8px;padding:10px 16px;text-align:center">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div style="flex:0 0 auto"><svg viewBox="0 0 300 276" style="width:100%;max-width:260px;display:block"><circle cx="150" cy="140" r="108" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><path d="M 150,140 L 258.0,140.0 A 108,108 0 0,0 150.0,32.0 Z" fill="#22c55e" opacity="0.35"/><text x="197.3" y="92.7" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#fff" font-weight="500">復甦期</text><path d="M 150,140 L 150.0,32.0 A 108,108 0 0,0 42.0,140.0 Z" fill="#f97316" opacity="0.35"/><text x="102.7" y="92.7" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#fff" font-weight="500">過熱期</text><path d="M 150,140 L 42.0,140.0 A 108,108 0 0,0 150.0,248.0 Z" fill="#f59e0b" opacity="1"/><text x="102.7" y="187.3" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#fff" font-weight="800">滯脹期</text><path d="M 150,140 L 150.0,248.0 A 108,108 0 0,0 258.0,140.0 Z" fill="#94a3b8" opacity="0.35"/><text x="197.3" y="187.3" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#fff" font-weight="500">衰退期</text><line x1="42" y1="140" x2="258" y2="140" stroke="rgba(255,255,255,0.65)" stroke-width="2"/><line x1="150" y1="32" x2="150" y2="248" stroke="rgba(255,255,255,0.65)" stroke-width="2"/><text x="267" y="140" dominant-baseline="middle" font-size="9" fill="#64748b">成長↑</text><text x="33" y="140" text-anchor="end" dominant-baseline="middle" font-size="9" fill="#64748b">成長↓</text><text x="150" y="22" text-anchor="middle" font-size="9" fill="#64748b">通脹↑</text><text x="150" y="262" text-anchor="middle" font-size="9" fill="#64748b">通脹↓</text><line x1="150" y1="140" x2="86.6" y2="203.4" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/><circle cx="150" cy="140" r="9" fill="#1e293b"/><circle cx="150" cy="140" r="4" fill="#f0b429"/></svg></div><div style="flex:1;min-width:140px;padding-left:8px;font-size:11px;color:#475569;line-height:1.9"><div style="font-size:14px;font-weight:700;color:#0f2a4a;margin-bottom:6px">滯脹期（Stagflation）</div><div>📈 成長方向：<b>↓ 下降</b></div><div>🌡 通脹方向：<b>↑ 上升</b></div><div style="margin-top:10px;padding:8px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:6px"><div style="font-size:9.5px;color:#94a3b8;letter-spacing:.5px">10Y-5Y 利差</div><div style="font-size:20px;font-weight:700;color:#0f2a4a;margin:2px 0">+0.358</div></div><div style="font-size:9px;color:#94a3b8;margin-top:8px;line-height:1.7">判斷依據：<br>10Y-5Y利差 20日MA斜率<br>+ TIP/IEF比率 20日MA斜率</div></div></div>
+  </div>
+</div>
+
+<!-- 5. CAPITAL FLOWS -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">5</div><div class="sec-title">全球資金流向脈動</div></div>
+  <div style="font-size:10px;color:#94a3b8;margin-bottom:8px">基於 ETF Chaikin Money Flow (CMF) × 成交量</div>
+  <table>
+    <thead><tr><th>名稱</th><th>ETF</th><th class="num">當日</th><th class="num">近一週</th><th class="num">近一月</th><th class="num">年初至今</th></tr></thead>
+    <tbody><tr><td>美國</td><td class="sym">SPY</td><td class="num dn">-65.1億</td><td class="num dn">-168.9億</td><td class="num up">+1129.3億</td><td class="num up">+1962.3億</td></tr><tr><td>歐洲</td><td class="sym">VGK</td><td class="num dn">-137萬</td><td class="num up">+7823萬</td><td class="num up">+10.3億</td><td class="num up">+25.9億</td></tr><tr><td>日本</td><td class="sym">EWJ</td><td class="num up">+7793萬</td><td class="num up">+8.39億</td><td class="num up">+62.5億</td><td class="num up">+97.0億</td></tr><tr><td>中國/港股</td><td class="sym">FXI</td><td class="num dn">-877萬</td><td class="num up">+2.81億</td><td class="num up">+50.5億</td><td class="num up">+139.2億</td></tr><tr><td>台灣</td><td class="sym">EWT</td><td class="num up">+4346萬</td><td class="num up">+2.44億</td><td class="num up">+28.6億</td><td class="num up">+45.9億</td></tr><tr><td>韓國</td><td class="sym">EWY</td><td class="num up">+3022萬</td><td class="num up">+4.84億</td><td class="num up">+139.2億</td><td class="num up">+256.2億</td></tr><tr><td>印度</td><td class="sym">INDA</td><td class="num dn">-5517萬</td><td class="num dn">-3.02億</td><td class="num up">+12.1億</td><td class="num up">+46.2億</td></tr><tr><td>新興市場</td><td class="sym">VWO</td><td class="num up">+6283萬</td><td class="num up">+6.35億</td><td class="num up">+42.4億</td><td class="num up">+93.4億</td></tr><tr><td>印尼</td><td class="sym">EIDO</td><td class="num up">+293萬</td><td class="num up">+1201萬</td><td class="num up">+3109萬</td><td class="num dn">-5350萬</td></tr><tr><td>越南</td><td class="sym">VNM</td><td class="num dn">-432萬</td><td class="num dn">-1839萬</td><td class="num dn">-5117萬</td><td class="num dn">-2909萬</td></tr><tr><td>泰國</td><td class="sym">THD</td><td class="num dn">-14.7萬</td><td class="num up">+15.6萬</td><td class="num up">+4164萬</td><td class="num up">+5701萬</td></tr><tr><td>馬來西亞</td><td class="sym">EWM</td><td class="num up">+4.0萬</td><td class="num up">+288萬</td><td class="num up">+5686萬</td><td class="num up">+1.47億</td></tr><tr><td>菲律賓</td><td class="sym">EPHE</td><td class="num up">+13.8萬</td><td class="num up">+225萬</td><td class="num up">+1342萬</td><td class="num up">+4410萬</td></tr><tr><td>澳洲</td><td class="sym">EWA</td><td class="num up">+681萬</td><td class="num up">+1.17億</td><td class="num up">+8.35億</td><td class="num up">+13.9億</td></tr></tbody>
+  </table>
+</div>
+
+<!-- 6. SECTOR FLOWS -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">6</div><div class="sec-title">GICS 11大板塊 &amp; 債券資金流向</div></div>
+  <div class="sub-hdr">板塊 ETF 資金流向</div>
+  <table><thead><tr><th>名稱</th><th>ETF</th><th class="num">當日</th><th class="num">近一週</th><th class="num">近一月</th><th class="num">年初至今</th></tr></thead><tbody><tr><td>資訊科技</td><td class="sym">XLK</td><td class="num dn">-2.06億</td><td class="num dn">-8.46億</td><td class="num up">+7.97億</td><td class="num dn">-68.5億</td></tr><tr><td>公用事業</td><td class="sym">XLU</td><td class="num dn">-8674萬</td><td class="num up">+1.45億</td><td class="num up">+45.2億</td><td class="num up">+51.3億</td></tr><tr><td>金融</td><td class="sym">XLF</td><td class="num dn">-5956萬</td><td class="num up">+3.56億</td><td class="num up">+41.6億</td><td class="num dn">-37.0億</td></tr><tr><td>工業</td><td class="sym">XLI</td><td class="num up">+8352萬</td><td class="num up">+8.26億</td><td class="num up">+81.4億</td><td class="num up">+170.2億</td></tr><tr><td>能源</td><td class="sym">XLE</td><td class="num dn">-1.13億</td><td class="num dn">-8.01億</td><td class="num up">+49.1億</td><td class="num up">+98.4億</td></tr><tr><td>非必需消費</td><td class="sym">XLY</td><td class="num up">+4957萬</td><td class="num up">+6.35億</td><td class="num up">+58.1億</td><td class="num up">+44.7億</td></tr><tr><td>通訊服務</td><td class="sym">XLC</td><td class="num up">+841萬</td><td class="num up">+3.60億</td><td class="num up">+42.7億</td><td class="num up">+33.9億</td></tr><tr><td>房地產</td><td class="sym">XLRE</td><td class="num dn">-2817萬</td><td class="num up">+2167萬</td><td class="num up">+10.4億</td><td class="num up">+21.3億</td></tr><tr><td>原材料</td><td class="sym">XLB</td><td class="num up">+2120萬</td><td class="num up">+1.14億</td><td class="num up">+36.0億</td><td class="num up">+118.9億</td></tr><tr><td>醫療保健</td><td class="sym">XLV</td><td class="num dn">-2.32億</td><td class="num dn">-15.3億</td><td class="num up">+11.2億</td><td class="num up">+83.7億</td></tr><tr><td>必需消費</td><td class="sym">XLP</td><td class="num dn">-3.45億</td><td class="num dn">-13.8億</td><td class="num up">+6.62億</td><td class="num up">+202.7億</td></tr></tbody></table>
+  <div class="sub-hdr" style="margin-top:14px">債券市場資金流向</div>
+  <table><thead><tr><th>名稱</th><th>ETF</th><th class="num">當日</th><th class="num">近一週</th><th class="num">近一月</th><th class="num">年初至今</th></tr></thead><tbody><tr><td>1-3年國債</td><td class="sym">SHY</td><td class="num dn">-4336萬</td><td class="num dn">-1.20億</td><td class="num up">+3.49億</td><td class="num up">+4.36億</td></tr><tr><td>3-7年國債</td><td class="sym">IEI</td><td class="num dn">-2479萬</td><td class="num dn">-2.75億</td><td class="num up">+2.37億</td><td class="num up">+11.1億</td></tr><tr><td>7-10年國債</td><td class="sym">IEF</td><td class="num dn">-1.23億</td><td class="num dn">-10.1億</td><td class="num up">+18.9億</td><td class="num up">+41.3億</td></tr><tr><td>10-20年國債</td><td class="sym">TLH</td><td class="num dn">-3617萬</td><td class="num dn">-1.86億</td><td class="num dn">-2.01億</td><td class="num up">+1.34億</td></tr><tr><td>20年+國債</td><td class="sym">TLT</td><td class="num dn">-2.19億</td><td class="num dn">-25.3億</td><td class="num up">+58.2億</td><td class="num up">+178.5億</td></tr><tr><td>投資級債</td><td class="sym">LQD</td><td class="num dn">-6.18億</td><td class="num dn">-23.6億</td><td class="num up">+138.0億</td><td class="num up">+290.9億</td></tr><tr><td>非投資等債</td><td class="sym">HYG</td><td class="num dn">-6.78億</td><td class="num dn">-37.0億</td><td class="num up">+26.0億</td><td class="num up">+333.2億</td></tr><tr><td>新興債</td><td class="sym">EMB</td><td class="num dn">-1.22億</td><td class="num dn">-6.82億</td><td class="num up">+36.5億</td><td class="num up">+46.1億</td></tr><tr><td>新興美元債</td><td class="sym">VWOB</td><td class="num up">+47.4萬</td><td class="num dn">-641萬</td><td class="num up">+6653萬</td><td class="num up">+2.14億</td></tr><tr><td>新興本地債</td><td class="sym">EMLC</td><td class="num up">+287萬</td><td class="num up">+1820萬</td><td class="num up">+1.74億</td><td class="num up">+10.7億</td></tr></tbody></table>
+</div>
+
+<!-- 7. HOT STOCKS -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">7</div><div class="sec-title">當日熱門美股</div></div>
+  <div style="font-size:10px;color:#94a3b8;margin-bottom:10px">
+    篩選邏輯：資金追捧（量比 ≥ 1.5x + 上漲）｜資金出清（量比 ≥ 2.5x + 下跌）
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="sub-hdr" style="color:#16a34a">&#128293; 資金追捧</div>
+      <table>
+        <thead><tr><th>股票</th><th>代碼</th><th class="num">收盤價</th><th class="num">漲跌幅</th><th class="num">量比</th></tr></thead>
+        <tbody><tr><td>Arm Holdings</td><td class="sym">ARM</td><td class="num">$157.07</td><td class="num up">+16.38%</td><td class="num"><span class="vol-chip">6.1x</span></td></tr><tr><td>JetBlue</td><td class="sym">JBLU</td><td class="num">$4.75</td><td class="num up">+13.37%</td><td class="num"><span class="vol-chip">4.1x</span></td></tr><tr><td>Supermicro</td><td class="sym">SMCI</td><td class="num">$24.05</td><td class="num up">+8.19%</td><td class="num"><span class="vol-chip">1.6x</span></td></tr><tr><td>Hewlett Packard</td><td class="sym">HPE</td><td class="num">$25.78</td><td class="num up">+7.87%</td><td class="num"><span class="vol-chip">2.5x</span></td></tr><tr><td>Virgin Galactic</td><td class="sym">SPCE</td><td class="num">$2.52</td><td class="num up">+5.88%</td><td class="num"><span class="vol-chip">2.3x</span></td></tr><tr><td>PDD Holdings</td><td class="sym">PDD</td><td class="num">$102.61</td><td class="num up">+4.61%</td><td class="num"><span class="vol-chip">3.0x</span></td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sub-hdr" style="color:#dc2626">&#9888;&#65039; 資金出清</div>
+      <table>
+        <thead><tr><th>股票</th><th>代碼</th><th class="num">收盤價</th><th class="num">漲跌幅</th><th class="num">量比</th></tr></thead>
+        <tbody><tr><td>Generac</td><td class="sym">GNRC</td><td class="num">$205.16</td><td class="num dn">-1.94%</td><td class="num"><span class="vol-chip">3.8x</span></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 8. CRYPTO -->
+<div class="sec">
+  <div class="sec-hdr"><div class="sec-num">8</div><div class="sec-title">加密貨幣市場</div></div>
+  <table>
+    <thead><tr><th>幣種</th><th>代號</th><th class="num">價格（USD）</th><th class="num">24h 漲跌</th><th class="num">漲跌幅</th><th class="trend">趨勢</th></tr></thead>
+    <tbody><tr><td>Bitcoin</td><td class="sym">BTC</td><td class="num">$71,309.88</td><td class="num up">+792.02</td><td class="num up">+1.12%</td><td class="up trend">▲</td></tr><tr><td>Ethereum</td><td class="sym">ETH</td><td class="num">$2,168.02</td><td class="num up">+12.32</td><td class="num up">+0.57%</td><td class="up trend">▲</td></tr><tr><td>BNB</td><td class="sym">BNB</td><td class="num">$647.33</td><td class="num up">+9.08</td><td class="num up">+1.42%</td><td class="up trend">▲</td></tr><tr><td>Solana</td><td class="sym">SOL</td><td class="num">$91.71</td><td class="num up">+0.89</td><td class="num up">+0.98%</td><td class="up trend">▲</td></tr><tr><td>XRP</td><td class="sym">XRP</td><td class="num">$1.41</td><td class="num dn">-0.00</td><td class="num dn">-0.08%</td><td class="dn trend">▼</td></tr><tr><td>Cardano</td><td class="sym">ADA</td><td class="num">$0.27031</td><td class="num up">+0.00</td><td class="num up">+1.55%</td><td class="up trend">▲</td></tr><tr><td>Dogecoin</td><td class="sym">DOGE</td><td class="num">$0.09612</td><td class="num up">+0.00</td><td class="num up">+1.07%</td><td class="up trend">▲</td></tr></tbody>
+  </table>
+</div>
+
+</div><!-- /body-wrap -->
+
+<!-- FOOTER -->
+<div class="report-footer">
+  <div>報告製作時間：2026-03-26 15:09（本地時間）</div>
+  <div>資料來源：Yahoo Finance · CNN Fear &amp; Greed Index · Reuters · MarketWatch · CNBC</div>
+  <div>資金流向基於 ETF Chaikin Money Flow (CMF) &times; 成交量計算</div>
+  <div class="disclaimer">本報告僅供參考，不構成任何投資建議。投資有風險，入市需謹慎。</div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
