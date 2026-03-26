@@ -141,7 +141,7 @@ def summarize_with_claude(articles: list[dict]) -> str:
     today = datetime.now(tz_tw).strftime("%Y年%-m月%-d日")
 
     raw = "\n\n".join([
-        f"[{a['source']} | {a['date']}]\n標題：{a['title']}\n摘要：{a['summary']}\n連結：{a['link']}"
+        f"[{a['source']} | {a['date']}]\n標題：{a['title']}\n摘要：{a['summary']}"
         for a in articles[:60]
     ])
 
@@ -149,12 +149,13 @@ def summarize_with_claude(articles: list[dict]) -> str:
 
 以下是今日自動抓取的新聞原始資料，請整理成繁體中文每日摘要，輸出給 LINE 訊息使用（純文字，不要用 Markdown 語法如 ** 或 ###）。
 
-【筆記本電腦規則 - 非常重要】
-只整理以下大陸品牌的筆電新聞，其他品牌（HP、Dell 一般款、蘋果等）一律忽略：
+【筆記本電腦規則 - 非常重要，嚴格執行】
+筆電新聞只能出現以下大陸/亞洲品牌，看到其他品牌（HP、Dell 普通款、蘋果 MacBook、微軟 Surface 等）請直接忽略，不得放入輸出：
 機械革命、拯救者（Legion）、ROG 玩家國度、外星人（Alienware）、
 神舟、雷神、機械師、火影、炫龍、
 小米/紅米、華為/榮耀、聯想（ThinkPad/IdeaPad/Yoga）、
 微星（MSI）、華碩（ROG/VivoBook/ZenBook）、宏碁（Predator/Nitro）
+若以上品牌今日無新聞，請直接寫「今日無大陸品牌筆電重大消息」，不要用其他品牌湊數。
 
 【其他硬體規則】
 顯卡（NVIDIA、AMD、Intel Arc）：有價格變動請標明「漲/跌」幅度與地區
@@ -193,7 +194,7 @@ CPU（Intel、AMD）：有價格變動請標明「漲/跌」幅度與地區
 ────────────────────
 💡 額外提醒：一句趨勢或購買建議
 
-注意：只使用上方提供的原始新聞，不需要附上連結，無相關新聞的分類請寫「今日無重大消息」。"""
+注意：只使用上方提供的原始新聞，輸出中絕對不要出現任何網址或連結，無相關新聞的分類請寫「今日無重大消息」。"""
 
     message = client.messages.create(
         model="claude-opus-4-6",
