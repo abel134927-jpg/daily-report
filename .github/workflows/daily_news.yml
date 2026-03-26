@@ -1,32 +1,51 @@
-name: 每日電腦硬體新聞
+name: 每日新聞推送
 
 on:
   schedule:
-    # 每天 UTC 00:00 = 台灣時間 08:00 發送
-    - cron: "0 0 * * *"
+    # 每天 UTC 01:00 = 台灣時間 09:00
+    - cron: "0 1 * * *"
   workflow_dispatch:
-    # 允許在 GitHub 上手動點擊觸發（方便測試）
 
 jobs:
-  send-news:
+  hardware-news:
+    name: 硬體新聞
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
         run: pip install --no-cache-dir -r requirements.txt
 
-      - name: Run news collector
+      - name: Run hardware news
         env:
           DEEPSEEK_API_KEY:          ${{ secrets.DEEPSEEK_API_KEY }}
           LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
-          LINE_USER_ID:             ${{ secrets.LINE_USER_ID }}
+          LINE_USER_ID:              ${{ secrets.LINE_USER_ID }}
         run: python news_collector.py
+
+  ai-news:
+    name: AI 新聞
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: hardware-news   # 硬體新聞發完後再發 AI 新聞，避免訊息交錯
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Run AI news
+        env:
+          DEEPSEEK_API_KEY:          ${{ secrets.DEEPSEEK_API_KEY }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID:              ${{ secrets.LINE_USER_ID }}
+        run: python ai_news_collector.py
