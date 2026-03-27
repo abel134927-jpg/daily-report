@@ -155,12 +155,16 @@ def arrow(pct):
     if pct < 0:  return '▼'
     return '—'
 
-def calc_cmf(df, period=20):
-    hl = (df['High'] - df['Low']).replace(0, np.nan)
-    mfm = ((df['Close'] - df['Low']) - (df['High'] - df['Close'])) / hl
-    mfv = mfm.fillna(0) * df['Volume']
-    vol  = df['Volume'].rolling(period).sum()
-    return (mfv.rolling(period).sum() / vol).fillna(0)
+def calc_daily_money_flow(df):
+    """每日原始資金流量：MFM × Volume × Close。
+    MFM > 0 表示當日收盤偏高位（買壓），< 0 表示偏低位（賣壓）。"""
+    hl = (df['High'] - df['Low']).values
+    close = df['Close'].values
+    low   = df['Low'].values
+    high  = df['High'].values
+    vol   = df['Volume'].values
+    mfm = np.where(hl > 0, ((close - low) - (high - close)) / hl, 0.0)
+    return pd.Series(mfm * vol * close, index=df.index)
 
 # ============================================================
 # DATA FETCHING
@@ -213,25 +217,14 @@ def calc_etf_flow(sym, cache):
     df = df[df['Close'].notna()].copy()
     if len(df) < 25: return None
     try:
-        cmf = calc_cmf(df, 20)
-        n   = len(df)
+        mf = calc_daily_money_flow(df)
+        n  = len(mf)
 
-        def flow_range(a, b):
-            total = 0.0
-            for i in range(a, b):
-                total += float(cmf.iloc[i]) * float(df['Volume'].iloc[i]) * float(df['Close'].iloc[i])
-            return total
+        daily   = float(mf.iloc[-1])
+        weekly  = float(mf.iloc[max(-5,  -n):].sum())
+        monthly = float(mf.iloc[max(-21, -n):].sum())
+        ytd_total = float(mf[mf.index >= YEAR_START].sum())
 
-        daily   = float(cmf.iloc[-1]) * float(df['Volume'].iloc[-1]) * float(df['Close'].iloc[-1])
-        weekly  = flow_range(max(-5,  -n), 0)
-        monthly = flow_range(max(-21, -n), 0)
-
-        ytd_df  = df[df.index >= YEAR_START]
-        ytd_cmf = cmf[cmf.index >= YEAR_START]
-        ytd_total = sum(
-            float(ytd_cmf.iloc[i]) * float(ytd_df['Volume'].iloc[i]) * float(ytd_df['Close'].iloc[i])
-            for i in range(len(ytd_df)) if i < len(ytd_cmf)
-        )
         return {'daily': daily, 'weekly': weekly, 'monthly': monthly, 'ytd': ytd_total}
     except Exception:
         return None
@@ -1510,7 +1503,7 @@ def generate_html(d):
 <!-- 5. CAPITAL FLOWS -->
 <div class="sec">
   <div class="sec-hdr"><div class="sec-num">5</div><div class="sec-title">全球資金流向脈動</div></div>
-  <div style="font-size:10px;color:#94a3b8;margin-bottom:8px">基於 ETF Chaikin Money Flow (CMF) × 成交量</div>
+  <div style="font-size:10px;color:#94a3b8;margin-bottom:8px">基於 ETF 每日原始資金流量（MFM × 成交量 × 收盤價）累加</div>
   <table>
     {FLOW_HDR}
     <tbody>{c_rows}</tbody>
@@ -1565,7 +1558,7 @@ def generate_html(d):
 <div class="report-footer">
   <div>報告製作時間：{REPORT_TIME}（本地時間）</div>
   <div>資料來源：Yahoo Finance · CNN Fear &amp; Greed Index · Reuters · MarketWatch · CNBC</div>
-  <div>資金流向基於 ETF Chaikin Money Flow (CMF) &times; 成交量計算</div>
+  <div>資金流向基於 ETF 每日原始資金流量（MFM &times; 成交量 &times; 收盤價）累加計算</div>
   <div class="disclaimer">本報告僅供參考，不構成任何投資建議。投資有風險，入市需謹慎。</div>
 </div>
 
