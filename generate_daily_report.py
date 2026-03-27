@@ -27,7 +27,9 @@ warnings.filterwarnings('ignore')
 REPORT_DIR = Path(__file__).parent / "reports"
 REPORT_DIR.mkdir(exist_ok=True)
 
-NOW        = datetime.now()
+import zoneinfo
+_TZ_TPE    = zoneinfo.ZoneInfo('Asia/Taipei')
+NOW        = datetime.now(_TZ_TPE).replace(tzinfo=None)
 TODAY_STR  = NOW.strftime('%Y-%m-%d')
 REPORT_TIME= NOW.strftime('%Y-%m-%d %H:%M')
 YEAR_START = datetime(NOW.year, 1, 1)
@@ -1556,7 +1558,7 @@ def generate_html(d):
 
 <!-- FOOTER -->
 <div class="report-footer">
-  <div>報告製作時間：{REPORT_TIME}（本地時間）</div>
+  <div>報告製作時間：{REPORT_TIME}（台北時間 UTC+8）</div>
   <div>資料來源：Yahoo Finance · CNN Fear &amp; Greed Index · Reuters · MarketWatch · CNBC</div>
   <div>資金流向基於 ETF 每日原始資金流量（MFM &times; 成交量 &times; 收盤價）累加計算</div>
   <div class="disclaimer">本報告僅供參考，不構成任何投資建議。投資有風險，入市需謹慎。</div>
