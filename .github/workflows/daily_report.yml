@@ -1,0 +1,36 @@
+name: 每日財經早報
+
+on:
+  schedule:
+    - cron: '30 23 * * *'  # 台灣時間 07:30 (UTC+8 = UTC-8h)
+  workflow_dispatch:       # 允許手動觸發
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: 產生財經報告
+        run: python generate_daily_report.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: 發布到 GitHub Pages
+        run: |
+          cp latest_report.html index.html
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Report $(date +'%Y-%m-%d %H:%M UTC')"
+          git push
