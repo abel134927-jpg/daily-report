@@ -11,14 +11,14 @@ from datetime import datetime, timedelta, timezone
 from openai import OpenAI
 
 # ==================== RSS 來源 ====================
+# 英文來源：GPU/CPU 硬體規格與發布訊息為主
 HARDWARE_FEEDS = [
     ("Tom's Hardware",  "https://www.tomshardware.com/feeds/all"),
     ("TechPowerUp",     "https://www.techpowerup.com/rss/news.xml"),
     ("Videocardz",      "https://videocardz.com/feed"),
-    ("Wccftech",        "https://wccftech.com/feed/"),
-    ("The Verge",       "https://www.theverge.com/rss/index.xml"),
 ]
 
+# 大陸科技媒體：新品發布、價格行情
 CN_TECH_FEEDS = [
     ("IT之家",      "https://www.ithome.com/rss/"),
     ("快科技",      "https://news.mydrivers.com/rss/"),
@@ -27,23 +27,39 @@ CN_TECH_FEEDS = [
     ("什麼值得買",  "https://www.smzdm.com/feed/"),
 ]
 
+# 社群平台：口碑推薦、評測、性價比討論
 CN_SOCIAL_FEEDS = [
+    # 微博
+    ("微博-顯卡",       "https://rsshub.app/weibo/search/weibo?q=顯卡降價"),
+    ("微博-裝機",       "https://rsshub.app/weibo/search/weibo?q=裝機推薦"),
     ("微博-機械革命",   "https://rsshub.app/weibo/search/weibo?q=機械革命"),
     ("微博-拯救者",     "https://rsshub.app/weibo/search/weibo?q=拯救者筆記本"),
-    ("微博-ROG",        "https://rsshub.app/weibo/search/weibo?q=ROG筆電"),
-    ("微博-外星人",     "https://rsshub.app/weibo/search/weibo?q=外星人筆記本"),
-    ("知乎-機械革命",   "https://rsshub.app/zhihu/search?query=機械革命筆記本"),
+    # 知乎
+    ("知乎-顯卡推薦",   "https://rsshub.app/zhihu/search?query=顯卡推薦2025"),
+    ("知乎-裝機",       "https://rsshub.app/zhihu/search?query=裝機配置推薦"),
+    ("知乎-筆電推薦",   "https://rsshub.app/zhihu/search?query=筆記本電腦推薦"),
     ("知乎-拯救者",     "https://rsshub.app/zhihu/search?query=拯救者筆記本"),
-    ("B站-機械革命",    "https://rsshub.app/bilibili/search/video?keyword=機械革命筆電"),
+    # B站
+    ("B站-裝機推薦",    "https://rsshub.app/bilibili/search/video?keyword=裝機推薦性價比"),
+    ("B站-顯卡評測",    "https://rsshub.app/bilibili/search/video?keyword=顯卡評測值不值得買"),
+    ("B站-筆電推薦",    "https://rsshub.app/bilibili/search/video?keyword=筆記本電腦推薦"),
+    ("B站-機械革命",    "https://rsshub.app/bilibili/search/video?keyword=機械革命筆電評測"),
     ("B站-拯救者",      "https://rsshub.app/bilibili/search/video?keyword=拯救者筆電評測"),
-    ("B站-ROG",         "https://rsshub.app/bilibili/search/video?keyword=ROG筆電評測"),
+    # 小紅書
+    ("小紅書-筆電推薦", "https://rsshub.app/xiaohongshu/search/notes?keyword=筆記本推薦"),
+    ("小紅書-裝機",     "https://rsshub.app/xiaohongshu/search/notes?keyword=裝機推薦"),
+    ("小紅書-顯卡",     "https://rsshub.app/xiaohongshu/search/notes?keyword=顯卡推薦"),
 ]
 
-ALL_FEEDS = HARDWARE_FEEDS + CN_TECH_FEEDS + CN_SOCIAL_FEEDS
+ALL_FEEDS = CN_TECH_FEEDS + CN_SOCIAL_FEEDS  # 只保留中國來源
 
 # ==================== 關鍵字分類 ====================
 # 大陸筆電品牌（只有命中這裡才算筆電新聞）
 LAPTOP_CN_KEYWORDS = [
+    # 通用詞
+    "筆記本", "笔记本", "筆電", "笔电", "輕薄本", "轻薄本",
+    "遊戲本", "游戏本", "商務本", "商务本", "notebook", "laptop",
+    # 品牌名
     "機械革命", "mechrev",
     "拯救者", "legion",
     "rog", "玩家國度",
@@ -62,15 +78,32 @@ LAPTOP_CN_KEYWORDS = [
     "acer predator", "acer nitro", "宏碁掠奪者",
 ]
 
-# GPU / CPU / 其他硬體關鍵字
+# GPU / CPU / 其他硬體關鍵字（DIY 市場 / 消費端視角）
 OTHER_HW_KEYWORDS = [
+    # 顯卡
     "gpu", "graphics card", "rtx 5", "rtx 4", "rtx 3", "geforce",
     "radeon", "rx 9", "rx 8", "rx 7", "arc ", "intel arc",
     "顯卡", "显卡", "video card",
+    "dlss", "fsr", "xess",
+    # CPU
     "ryzen", "core ultra", "core i9", "core i7", "core i5",
     "snapdragon x", "cpu", "processor", "處理器", "处理器",
-    "motherboard", "主板", "主機板", "ddr5", "ddr4",
-    "ssd", "nvme", "psu", "power supply", "monitor", "顯示器", "显示器",
+    # 主機板 / 記憶體 / 儲存
+    "motherboard", "主板", "主機板",
+    "ddr5", "ddr4", "記憶體", "记忆体", "内存",
+    "ssd", "nvme", "固態硬碟", "固态硬盘",
+    # 電源 / 散熱 / 機箱
+    "psu", "power supply", "電源", "电源",
+    "散熱", "散热", "aio", "水冷", "風冷",
+    "機箱", "机箱",
+    # 螢幕
+    "monitor", "顯示器", "显示器",
+    # DIY / 裝機 / 推薦
+    "裝機", "装机", "配置推薦", "配置推荐", "性價比", "性价比",
+    "值不值得買", "顯卡推薦", "显卡推荐",
+    # 價格行情
+    "漲價", "涨价", "降價", "降价", "price cut", "price hike",
+    "國補", "国补", "活動價", "促銷", "首發價",
 ]
 
 
@@ -153,53 +186,60 @@ def summarize_with_deepseek(articles: list[dict]) -> str:
         else:
             hardware_lines.append(entry)
 
-    laptop_raw   = "\n\n".join(laptop_lines)   or "（今日無大陸筆電品牌新聞）"
-    hardware_raw = "\n\n".join(hardware_lines) or "（今日無相關硬體新聞）"
+    laptop_raw   = "\n\n".join(laptop_lines)   or "（今日無筆記本電腦相關新聞）"
+    hardware_raw = "\n\n".join(hardware_lines) or "（今日無顯卡/CPU/配件相關新聞）"
 
-    prompt = f"""你是一位專業的電腦硬體每日新聞整理專家，請整理成繁體中文摘要發送至 LINE（純文字，不得包含任何網址或連結）。
+    prompt = f"""你是一位服務 DIY 裝機玩家和個人消費者的電腦硬體每日情報整理員。
+受眾是台灣/大陸的普通消費者，在意的是：實際購買價格、新品規格值不值得買、現在什麼配置最划算、哪款筆電最多人推薦。
+請整理成繁體中文摘要，發送至 LINE（純文字，不得包含任何網址或連結）。
 
-【篩選規則 - 嚴格執行】
-以下類型的新聞才能放入輸出，其餘一律忽略：
-✅ 筆電：新品發布、規格公布、評測、上市日期、售價、降價/漲價
-✅ 顯卡：新品發布、價格變動、上市、效能測試
-✅ CPU：新品發布、價格變動、上市、跑分
-✅ 其他硬體：重大新品或明顯降價
-❌ 排除：復古/古董電腦、太空/科學、遊戲玩法故事、軟體、非硬體產品新聞
+【篩選規則 - 嚴格執行，其餘一律忽略】
+✅ 筆電：新品發布含規格與售價、評測結論、降價促銷、性價比排行、推薦型號
+✅ 顯卡：新品發布含價格、現貨行情漲跌、性價比推薦、評測結論
+✅ CPU：新品發布含價格、行情漲跌、裝機推薦搭配
+✅ DIY 配件：記憶體/SSD/電源等明顯漲降價、熱門推薦型號
+✅ 裝機建議：各預算最推薦的配置（B站/知乎/小紅書口碑）
+❌ 排除：企業財報、工廠產能、太空/科學、遊戲劇情、純軟體新聞、非消費端產品
 
-=== 大陸筆電品牌新聞（只整理這些，不得加入其他品牌）===
+【價格標示原則】
+- 優先標示大陸市場人民幣（¥）現售價或活動價
+- 有漲跌請標明漲/跌幅與幅度（例：漲幅約10%）
+- 若有國補請加註（含國補後 ¥XXXX）
+
+=== 筆記本電腦新聞 ===
 {laptop_raw}
 
-=== 顯卡 / CPU / 其他硬體新聞 ===
+=== 顯卡 / CPU / DIY 配件新聞 ===
 {hardware_raw}
 
 【輸出格式，嚴格遵守，不得輸出任何 http 網址】
 
 📅 今日日期：{today}
 ────────────────────
-🔥 今日重點新聞（最多3則，標註原因）
+🔥 今日重點（最多3則，說明為何重要或影響購買決策）
 1.
 2.
 3.
 ════════════════════
-📌 大陸筆電新聞
+📌 筆記本電腦新聞
 • 標題
-  摘要：（1-2句，不附連結）
+  摘要：規格/價格/推薦結論，1-2句
 
 ════════════════════
-📌 顯卡新聞與價格
+📌 顯卡行情與新品
 • 標題
-  摘要：（1-2句，有價格變動請標明漲/跌與地區）
+  摘要：價格/漲跌/性價比結論，1-2句
 
 ════════════════════
-📌 CPU新聞與價格
+📌 CPU 行情與新品
 • 標題
-  摘要：（1-2句，有價格變動請標明漲/跌與地區）
+  摘要：價格/漲跌/推薦搭配，1-2句
 
 ════════════════════
-📌 其他電腦硬體新聞
-（若無重大消息請寫：今日無重大消息）
+📌 DIY 配件 / 其他硬體
+（記憶體、SSD、電源等；若無重大消息請寫：今日無重大消息）
 ────────────────────
-💡 額外提醒：一句趨勢或購買建議"""
+💡 今日購買建議：一句話，現在適合買什麼、等什麼、避開什麼"""
 
     resp = client.chat.completions.create(
         model="deepseek-chat",
