@@ -1,0 +1,10 @@
+services:
+  - type: cron
+    name: daily-news-trigger
+    runtime: python
+    schedule: "0 1 * * *"   # UTC 01:00 = 台灣時間 09:00
+    buildCommand: pip install requests
+    startCommand: python trigger_workflow.py
+    envVars:
+      - key: GITHUB_PAT
+        sync: false          # 在 Render Dashboard 手動填入 GitHub PAT

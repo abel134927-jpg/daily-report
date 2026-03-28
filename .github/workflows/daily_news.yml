@@ -1,10 +1,7 @@
 name: 每日新聞推送
 
 on:
-  schedule:
-    # 每天 UTC 01:00 = 台灣時間 09:00
-    - cron: "0 1 * * *"
-  workflow_dispatch:
+  workflow_dispatch:   # 由 Render Cron Job 每天 UTC 01:00 觸發，比 schedule 可靠
 
 jobs:
   hardware-news:
