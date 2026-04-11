@@ -1,8 +1,11 @@
 name: 每日新聞推送
 
 on:
+  workflow_run:
+    workflows: ["每日財經早報"]   # 財經早報 commit 後立即接著跑，避免 schedule 延遲
+    types: [completed]
   schedule:
-    - cron: '0 1 * * *'  # 每天 UTC 01:00 = 台灣時間 09:00
+    - cron: '0 1 * * *'  # 備用：UTC 01:00 = 台灣時間 09:00（GitHub schedule 可能延遲）
   workflow_dispatch:     # 允許手動觸發
 
 jobs:
@@ -10,6 +13,8 @@ jobs:
     name: 硬體新聞
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # workflow_run 觸發時只在上游成功後執行；schedule/workflow_dispatch 直接跑
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
