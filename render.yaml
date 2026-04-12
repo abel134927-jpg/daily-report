@@ -2,7 +2,7 @@ services:
   - type: cron
     name: daily-news-trigger
     runtime: python
-    schedule: "0 1 * * *"   # UTC 01:00 = 台灣時間 09:00
+    schedule: "0 23 * * *"  # UTC 23:00 = 台灣時間 07:00（觸發財經早報，再接新聞推送）
     buildCommand: pip install requests
     startCommand: python trigger_workflow.py
     envVars:

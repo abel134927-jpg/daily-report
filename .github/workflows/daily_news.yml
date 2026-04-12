@@ -5,7 +5,7 @@ on:
     workflows: ["每日財經早報"]   # 財經早報 commit 後立即接著跑，避免 schedule 延遲
     types: [completed]
   schedule:
-    - cron: '0 1 * * *'  # 備用：UTC 01:00 = 台灣時間 09:00（GitHub schedule 可能延遲）
+    - cron: '30 23 * * *'  # 備用：UTC 23:30（外部服務失效時的 fallback）
   workflow_dispatch:     # 允許手動觸發
 
 jobs:

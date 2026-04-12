@@ -2,8 +2,10 @@ name: 每日財經早報
 
 on:
   schedule:
-    - cron: '30 23 * * *'  # 台灣時間 07:30 (UTC+8 = UTC-8h)
-  workflow_dispatch:       # 允許手動觸發
+    # ⚠️ GitHub free tier schedule 會延遲 6+ 小時，實際執行在台灣時間下午
+    # 請改用 cron-job.org 外部服務打 workflow_dispatch（見 trigger_workflow.py）
+    - cron: '0 23 * * *'   # 備用：UTC 23:00（外部服務失效時用）
+  workflow_dispatch:       # 允許手動觸發（外部 cron 服務走這個）
 
 jobs:
   generate-report:
